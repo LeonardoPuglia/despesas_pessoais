@@ -47,8 +47,8 @@ class Chart extends StatelessWidget {
   }
 
   double get _weekTotalValue {
-    return groupedTransaction.fold(
-        0.0, (sum, tr) => sum + (tr['value'] as double));
+    return groupedTransaction.fold(0.0,
+        (sum, tr) => sum + (tr['value'] == 0 ? 0 : (tr['value'] as double)));
   }
 
   @override
@@ -65,8 +65,10 @@ class Chart extends StatelessWidget {
                     fit: FlexFit.tight,
                     child: ChartBar(
                       label: tr['day'].toString(),
-                      value: tr['value'] as double,
-                      percentage: (tr['value'] as double) / _weekTotalValue,
+                      value: _weekTotalValue == 0 ? 0.0 : tr['value'] as double,
+                      percentage: _weekTotalValue == 0
+                          ? 0.0
+                          : (tr['value'] as double) / _weekTotalValue,
                     ),
                   ))
               .toList(),

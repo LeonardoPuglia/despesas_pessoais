@@ -52,36 +52,36 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [
-    Transaction(
-      id: 't1',
-      title: 'Nova Estante Quarto',
-      value: 710.76,
-      date: DateTime.now().subtract(Duration(days: 33)),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Novo tênis de Corrida',
-      value: 310.76,
-      date: DateTime.now().subtract(Duration(days: 3)),
-    ),
-    Transaction(
-      id: 't3',
-      title: 'Conta de Luz',
-      value: 211.30,
-      date: DateTime.now().subtract(Duration(days: 4)),
-    ),
-    Transaction(
-      id: 't4',
-      title: 'Cartão Crédito',
-      value: 10000.30,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: 't5',
-      title: 'Carro',
-      value: 34000.30,
-      date: DateTime.now().subtract(Duration(days: 4)),
-    ),
+    // Transaction(
+    //   id: 't1',
+    //   title: 'Nova Estante Quarto',
+    //   value: 710.76,
+    //   date: DateTime.now().subtract(Duration(days: 33)),
+    // ),
+    // Transaction(
+    //   id: 't2',
+    //   title: 'Novo tênis de Corrida',
+    //   value: 310.76,
+    //   date: DateTime.now().subtract(Duration(days: 3)),
+    // ),
+    // Transaction(
+    //   id: 't3',
+    //   title: 'Conta de Luz',
+    //   value: 211.30,
+    //   date: DateTime.now().subtract(Duration(days: 4)),
+    // ),
+    // Transaction(
+    //   id: 't4',
+    //   title: 'Cartão Crédito',
+    //   value: 10000.30,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: 't5',
+    //   title: 'Carro',
+    //   value: 34000.30,
+    //   date: DateTime.now().subtract(Duration(days: 4)),
+    // ),
   ];
 
   List<Transaction> get _recentTransactions {
@@ -92,16 +92,22 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  _addTransaction(String title, double value) {
+  _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(),
       title: title,
       value: value,
-      date: DateTime.now(),
+      date: date,
     );
 
     setState(() {
       _transactions.add(newTransaction);
+    });
+  }
+
+  _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tr) => tr.id == id);
     });
 
 //Fechar modal
@@ -134,7 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_recentTransactions),
-            TransactionList(transactions: _transactions),
+            TransactionList(
+                transactions: _transactions, onDelete: _deleteTransaction),
           ],
         ),
       ),
