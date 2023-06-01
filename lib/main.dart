@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:despesas_pessoais/components/chart.dart';
 import 'package:despesas_pessoais/components/transaction_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'components/transaction_list.dart';
 import 'models/transaction.dart';
@@ -16,6 +17,10 @@ class ExpensesAPP extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    // ]);
+
     final ThemeData tema = ThemeData();
 
     return MaterialApp(
@@ -51,38 +56,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
-    // Transaction(
-    //   id: 't1',
-    //   title: 'Nova Estante Quarto',
-    //   value: 710.76,
-    //   date: DateTime.now().subtract(Duration(days: 33)),
-    // ),
-    // Transaction(
-    //   id: 't2',
-    //   title: 'Novo tênis de Corrida',
-    //   value: 310.76,
-    //   date: DateTime.now().subtract(Duration(days: 3)),
-    // ),
-    // Transaction(
-    //   id: 't3',
-    //   title: 'Conta de Luz',
-    //   value: 211.30,
-    //   date: DateTime.now().subtract(Duration(days: 4)),
-    // ),
-    // Transaction(
-    //   id: 't4',
-    //   title: 'Cartão Crédito',
-    //   value: 10000.30,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: 't5',
-    //   title: 'Carro',
-    //   value: 34000.30,
-    //   date: DateTime.now().subtract(Duration(days: 4)),
-    // ),
-  ];
+  final List<Transaction> _transactions = [];
+  bool _showChart = false;
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
@@ -125,23 +100,55 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Despesas Pessoais'),
-        actions: [
-          IconButton(
-            onPressed: () => _openTransactionFormModal(context),
-            icon: Icon(Icons.add),
-          )
-        ],
+    final appBar = AppBar(
+      title: Text(
+        'Despesas Pessoais',
+        style: TextStyle(
+          fontSize: 18 * MediaQuery.of(context).textScaleFactor,
+        ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () => _openTransactionFormModal(context),
+          icon: Icon(Icons.add),
+        )
+      ],
+    );
+
+    final availabelHeight = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top;
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransactions),
-            TransactionList(
-                transactions: _transactions, onDelete: _deleteTransaction),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Exibir Gráfico'),
+                Switch(
+                  value: _showChart,
+                  onChanged: (value) {
+                    setState(() {
+                      _showChart = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            _showChart
+                ? Container(
+                    height: availabelHeight * 0.3,
+                    child: Chart(_recentTransactions))
+                : Container(
+                    height: availabelHeight * 0.7,
+                    child: TransactionList(
+                        transactions: _transactions,
+                        onDelete: _deleteTransaction),
+                  ),
           ],
         ),
       ),
